@@ -12,7 +12,7 @@
 3. **隐藏腰部轴刻**：通过 `ax1.tick_params` 彻底清理顶部子图底部的刻度线和标签，防止断开处出现混乱的刻度重叠。
 4. **`transAxes` 绝对居中画断口斜杠**：利用相对坐标变换，在断口处精准绘制居中且永不缩放的 `//` 符号。
 
-### 1、核心代码实现
+### 1、核心代码实现（注意分辨代码中的变量名）
 ```python
 # 数据引入
 names_hl = list(hl_results.keys())
@@ -70,7 +70,6 @@ plt.tight_layout()
 plt.savefig(os.path.join(IMG_DIR, "14c_hl_test_native_broken_axis.png"), dpi=150, bbox_inches='tight')
 plt.show()
 ```
-
 #### 1.1、核心代码解释
 1. **fig, (ax1, ax2) = plt.subplots(2, 1, sharex=False, figsize=(12, 8))**：建立上下两个同列子图
 2. **ax.set_ylim()**：标注子图y轴取值范围
@@ -80,3 +79,62 @@ plt.show()
 
 ![HL检验结果对比（14c_hl_test_native_broken_axis.png）](./images/14c_hl_test_native_broken_axis.png)
 
+## 二、 adjustText 原理与散点图标签避让实战
+
+### 问题背景
+在画多模型性能对比散点图（比如耗时 vs AUC）时，多个模型名称点密集堆叠在一起，文字直接“糊”成一团。
+
+### 核心实现技巧
+引入 adjustText 的“力导向算法”，实现标签的物理自动避让。
+
+### 核心代码实现
+```python
+from adjustText import adjust_text
+
+fig, ax = plt.subplots(figsize=(10, 7))
+
+# 创建一个空列表，用来存放生成的文字对象
+texts = []
+
+for r in all_results:
+    # 画散点（保持你原本的样式：颜色、边缘黑线、高优先级 zorder）
+    ax.scatter(r['time_total'], r['auc_mean'], 
+               s=150, 
+               c=colors_polar[names.index(r['name'])], 
+               edgecolors='black', 
+               linewidths=0.5, 
+               zorder=5)
+
+    # 核心改动：用 ax.text 生成文字，但不要指定偏移量，先让它呆在点的正上方
+    t = ax.text(r['time_total'], r['auc_mean'], r['name'], 
+                fontsize=9, 
+                ha='left', 
+                va='center')
+    texts.append(t)  # 把文字对象存进列表
+
+# 自动计算最合适的位置把文字推开，并画一条细灰线指回原点
+adjust_text(
+    texts, 
+    force_text=0.02,
+    only_move={'text': 'y', 'points': 'y'},  # 限制只在 Y 轴（上下）移动，防止 X 轴错乱
+    arrowprops=dict(arrowstyle='-', color='gray', lw=0.5, alpha=0.7) ,
+    avoid_self=True
+)
+# ===========================
+
+# 设置坐标轴与标题
+ax.set_xlabel('Training Time (s, 5-Fold Total)', fontsize=12)
+ax.set_ylabel('AUC (mean)', fontsize=12)
+ax.set_title('Speed vs Performance: AUC vs Training Time', fontsize=14, fontweight='bold')
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
+plt.tight_layout()
+plt.savefig(os.path.join(IMG_DIR, "12c_speed_vs_performance.png"), dpi=150, bbox_inches='tight')
+print("[图] 12c_changed_speed_vs_performance.png")
+plt.show()
+```
+
+#### 图片展示
+
+![Speed vs Performance: AUC vs Training Time（12c_speed_vs_performance.png）](./images/12c_speed_vs_performance.png)
