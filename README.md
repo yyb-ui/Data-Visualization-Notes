@@ -78,5 +78,5 @@ plt.show()
 
 #### 图片展示
 
-![HL检验结果对比：](./image/14c_hl_test_native_broken_axis.png)
+![HL检验结果对比（14c_hl_test_native_broken_axis.png）](image/14c_hl_test_native_broken_axis.png)
 
