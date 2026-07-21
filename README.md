@@ -87,9 +87,13 @@ ax1.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=Fal
 ```
 
 **·spines.bottom.set_visible(False) 与 spines.top.set_visible(False)：spines 是图表的物理边框。这两行代码精准隐藏了上下图交界处的黑线，让两张图无缝贴合，形成“一张图断开了”的视觉假象。**
+
 **·tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)：**
+
   **·axis='x'：锁定只清理横轴。**
+  
   **·which='both'：主刻度和次刻度全清，不留死角。**
+  
   **·后面的三个 False：把顶部子图（ax1）底部所有的刻度线和标签数字全部“物理擦除”，确保断口处清爽，完全交由底部 ax2 负责。**
 
 *第三步：核心骚操作——“穿天大柱”的视觉贯通*
