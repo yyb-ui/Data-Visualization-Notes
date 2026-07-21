@@ -12,7 +12,7 @@
 3. **隐藏腰部轴刻**：通过 `ax1.tick_params` 彻底清理顶部子图底部的刻度线和标签，防止断开处出现混乱的刻度重叠。
 4. **`transAxes` 绝对居中画断口斜杠**：利用相对坐标变换，在断口处精准绘制居中且永不缩放的 `//` 符号。
 
-### 1、核心代码实现（注意分辨代码中的变量名，所有前置代码可见./jupyter/calibration_dca.ipynb）
+### 1、核心代码实现（此处是做了防数据泄露的数据结果，注意分辨代码中的变量名，所有前置代码可见./jupyter/calibration_dca.ipynb）
 ```python
 # 数据引入
 names_hl = list(hl_results.keys())
@@ -237,3 +237,13 @@ arrowprops=dict(arrowstyle='-', color='gray', lw=0.5)
 #### 图片展示
 
 ![Speed vs Performance: AUC vs Training Time（12c_speed_vs_performance.png）](./images/12c_speed_vs_performance.png)
+
+
+## 三、中文字体引用
+
+**核心代码：**
+```python
+plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'DejaVu Sans', 'Arial']
+plt.rcParams['axes.unicode_minus'] = False
+sns.set_style('white',{'font.sans-serif':['Microsoft YaHei', 'SimHei','DejaVu Sans', 'Arial']})
+```
