@@ -86,11 +86,11 @@ ax2.spines.top.set_visible(False)
 ax1.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
 ```
 
-**·spines.bottom.set_visible(False) 与 spines.top.set_visible(False)：spines 是图表的物理边框。这两行代码精准隐藏了上下图交界处的黑线，让两张图无缝贴合，形成“一张图断开了”的视觉假象。
-  ·tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)：
-  ·axis='x'：锁定只清理横轴。
-  ·which='both'：主刻度和次刻度全清，不留死角。
-  ·后面的三个 False：把顶部子图（ax1）底部所有的刻度线和标签数字全部“物理擦除”，确保断口处清爽，完全交由底部 ax2 负责。**
+**·spines.bottom.set_visible(False) 与 spines.top.set_visible(False)：spines 是图表的物理边框。这两行代码精准隐藏了上下图交界处的黑线，让两张图无缝贴合，形成“一张图断开了”的视觉假象。**
+**·tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)：**
+  **·axis='x'：锁定只清理横轴。**
+  **·which='both'：主刻度和次刻度全清，不留死角。**
+  **·后面的三个 False：把顶部子图（ax1）底部所有的刻度线和标签数字全部“物理擦除”，确保断口处清爽，完全交由底部 ax2 负责。**
 
 *第三步：核心骚操作——“穿天大柱”的视觉贯通*
 
@@ -101,8 +101,8 @@ if chi > 250:
     ax2.bar(x, bottom_cap_height, ...)       # 在底部顶端画一个同色底座！
 ```
 
-**· 为什么要加这个底座？ 如果 KNN 的柱子超过了 250，顶部图确实画出了红柱，但底部图的对应位置（y=250 处）会留下一个“悬空的黑洞”。在底图最高点强行补齐一根同色的“截断底座”，让红柱看起来像是从下往上破土而出，视觉上直接贯通，完美解决柱子“断根悬浮”的问题。
-· 原理：通过 ax2.get_ylim()[1] 动态获取底图最大值，保证无论 Y 轴怎么调，底座永远精准对齐在顶端。**
+**· 为什么要加这个底座？ 如果 KNN 的柱子超过了 250，顶部图确实画出了红柱，但底部图的对应位置（y=250 处）会留下一个“悬空的黑洞”。在底图最高点强行补齐一根同色的“截断底座”，让红柱看起来像是从下往上破土而出，视觉上直接贯通，完美解决柱子“断根悬浮”的问题。**
+**· 原理：通过 ax2.get_ylim()[1] 动态获取底图最大值，保证无论 Y 轴怎么调，底座永远精准对齐在顶端。**
 
 *第四步：绝对对齐——用 transAxes 画断口斜杠*
 
@@ -113,11 +113,11 @@ ax1.plot([0, 1], [0, 0], transform=ax1.transAxes, **kwargs)
 ax2.plot([0, 1], [1, 1], transform=ax2.transAxes, **kwargs)
 ```
 
-**· transform=ax1.transAxes：这是 Matplotlib 里最优雅的“绝对坐标系”用法。它定义 (0,0) 始终为画布左下角，(1,1) 始终为右上角。无论图表怎么缩放，断轴斜杠永远居中。
-· marker=[(-1, -d), (1, d)]：用数学方式（两点连线）形成倾斜的 // 符号。千万不能用 ax.text 手写 //，那样的斜杠会随着图表缩放而位移，非常不专业。**
+**· transform=ax1.transAxes：这是 Matplotlib 里最优雅的“绝对坐标系”用法。它定义 (0,0) 始终为画布左下角，(1,1) 始终为右上角。无论图表怎么缩放，断轴斜杠永远居中。**
+**· marker=[(-1, -d), (1, d)]：用数学方式（两点连线）形成倾斜的 // 符号。千万不能用 ax.text 手写 //，那样的斜杠会随着图表缩放而位移，非常不专业。**
 
-**· plt.subplots(2, 1, sharex=False)：创建一个 2 行 1 列的画布。sharex=False 是地基中的地基！ 它强制让上方和下方的坐标轴完全独立，防止顶部巨大的 1.7e11 把底部 0~250 的刻度也同步拉大。
-· ax1.set_ylim(...) 与 ax2.set_ylim(...)：用 set_ylim 物理锁死 Y 轴范围。ax1 专门用于承载 KNN 爆表的卡方值，ax2 专门用于展示正常模型的微小卡方值。这种物理隔离，是断轴图安全可靠的前提。**
+**· plt.subplots(2, 1, sharex=False)：创建一个 2 行 1 列的画布。sharex=False 是地基中的地基！ 它强制让上方和下方的坐标轴完全独立，防止顶部巨大的 1.7e11 把底部 0~250 的刻度也同步拉大。**
+**· ax1.set_ylim(...) 与 ax2.set_ylim(...)：用 set_ylim 物理锁死 Y 轴范围。ax1 专门用于承载 KNN 爆表的卡方值，ax2 专门用于展示正常模型的微小卡方值。这种物理隔离，是断轴图安全可靠的前提。**
 
 #### 图片展示
 
