@@ -136,7 +136,7 @@ ax2.plot([0, 1], [1, 1], transform=ax2.transAxes, **kwargs)
 ![HL检验结果对比（14c_hl_test_native_broken_axis.png）](./images/14c_hl_test_native_broken_axis.png)
 
 
-## 二、 adjustText 原理与散点图标签避让实战(注意分辨代码中的变量名，所有前置代码可见./jupyter/teacher.modeling_comparison.ipynb)
+## 二、 adjustText 原理与散点图标签避让实战
 
 ### 问题背景
 在画多模型性能对比散点图（比如耗时 vs AUC）时，多个模型名称点密集堆叠在一起，文字直接“糊”成一团。
@@ -145,7 +145,7 @@ ax2.plot([0, 1], [1, 1], transform=ax2.transAxes, **kwargs)
 ### 核心实现技巧
 adjustText 底层不是简单的穷举，而是‘力导向布局算法’。你可以把每个标签想象成带电粒子：它们自带‘排斥力’防止彼此重叠；但底部又有‘锚定拉力’，防止飞太远脱离原点。通过几十次迭代，系统会自动计算出一个‘既不打架，又离得近’的全局最优解。这正是 AI 解决排版问题的方式。
 
-### 核心代码实现
+### 核心代码实现(注意分辨代码中的变量名，所有前置代码可见./jupyter/teacher.modeling_comparison.ipynb)
 ```python
 from adjustText import adjust_text
 
